@@ -1,6 +1,3 @@
----
-css: ~/user/dat/css/main.css
----
 # vim-srt
 
 This is a vim9script filetype plugin for working with subtitle (*.srt*) files.
@@ -37,24 +34,22 @@ Convert entire buffer to ASCII with transliteration (requires `iconv`):
 
 ## Mappings
 
-`<localleader>m` - :SRTClean
+`<localleader>m` - `:SRTClean`
 
-`<localleader>n` - :SRTNumber
+`<localleader>n` - `:SRTNumber`
 
 ## Customization
 
 `g:srt_maps` -  Create default mappings. default: true
 
+`g:srt_tabs` - Keep tabs with `:SRTClean`. default: false
 
-`g:srt_tabs` - Keep tabs with :SRTClean. default: false
+`g:srt_unix` - Convert file to unix with `:SRTClean`. default: true
 
-`g:srt_unix` - Convert file to unix with :SRTClean. default: true
-
-`g:srt_utf8` - Set encoding to utf-8 with :SRTClean. default: true
+`g:srt_utf8` - Set encoding to utf-8 with `:SRTClean`. default: true
 
 <!--metadata:
 author: Chris Magyar
 description: Vim9script subtitle file plugin.
 keywords: vim, vim9script, plugin, subtitle, srt
-css: ~/user/dat/css/main.css
 -->
