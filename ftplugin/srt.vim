@@ -111,7 +111,7 @@ def SRTToAscii(mode = 'n', start = -1, end = -1)
         echohl none
         return
     endif
-    const subs = [["[\d9833\d9834\d9835\d9836]", '#']]
+    const subs = [['[\d9833\d9834\d9835\d9836]', '#']]
     var line0 = line('.')
     var line1 = line0
     if mode == 'v'
