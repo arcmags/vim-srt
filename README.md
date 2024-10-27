@@ -25,6 +25,10 @@ Renumber subtiles:
 
     :SRTNumber
 
+Skew all subtitle timecodes, calculated from two timecodes and offsets:
+
+    :SRTSkew <TIME> <NUMBER> <TIME> <NUMBER>
+
 Shift all subtitle timescodes by NUMBER milliseconds (positive or negative):
 
     :SRTShift <NUMBER>
