@@ -89,14 +89,14 @@ def SRTClean()
     sil keepp :%s/[\d9833\d9834\d9835\d9836]\+/\=nr2char(9834)/ge
     # merge repeated eighth notes:
     sil keepp :%s/\%d9834[\d9834 ]\{-}\%d9834/\=nr2char(9834)/ge
-    # add missing space before eighth notes at ends of lines:
+    # add missing space before eighth notes at end of lines:
     sil keepp :%s/^\(.\+\)\([^ ]\)\(\%d9834\)$/\1\2 \3/ge
     # merge repeated pound symbols:
     sil keepp :%s/#[# ]\{-}#/#)/ge
-    # add missing space before pound symbols at ends of lines:
+    # add missing space before pound symbols at end of lines:
     sil keepp :%s/^\(.\+\)\([^ ]\)#$/\1\2 #/ge
     # renumber subtitles:
-    call SRTNumber()
+    SRTNumber()
     setpos('.', pos)
 enddef
 
