@@ -1,7 +1,7 @@
 vim9script
 ## srt.vim - filetype plugin for working with subtitle files ::
 # maintainer: Chris Magyar <c.magyar.ec@gmail.com>
-# updated: 2024-02-13
+# updated: 2024-10-26
 
 if !exists('g:srt_maps') || g:srt_maps
     nnoremap <buffer> <localleader>m <scriptcmd>SRTClean()<cr>
