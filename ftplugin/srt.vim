@@ -78,9 +78,8 @@ def SRTClean()
     sil keepp :%s/\($\n\s*\)\+\%$//e
     # remove leading blank lines:
     sil keepp :%s/\%^\n\+//e
-    # fix timestamps with bad syntax:
-    sil keepp :%s/^\(\d\+:\d\d:\d\d,\d\d\d\)\s*-\?>\+\s*\(\d\+:\d\d:\d\d,\d\d\d\)$/\1 --> \2/e
-    sil keepp :%s/^\(\d\+:\d\d:\d\d,\d\d\d\)\s*---\+>\+\s*\(\d\+:\d\d:\d\d,\d\d\d\)$/\1 --> \2/e
+    # fix incorrect timestamp arrows:
+    sil keepp :%s/^\(\d\+:\d\d:\d\d,\d\d\d\)\s*\(\|-\|---\+\)>\+\s*\(\d\+:\d\d:\d\d,\d\d\d\)$/\1 --> \3/e
     # remove blank lines between indexes and timecodes:
     sil keepp :%s/\(\%^\|\n\)\(\d\+\n\)\n\+/\1\2/e
     # remove blank lines between timecodes and text:
