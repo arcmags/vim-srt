@@ -1,33 +1,36 @@
 vim9script
 ## srt.vim - filetype plugin for working with subtitle files ::
 # maintainer: Chris Magyar <c.magyar.ec@gmail.com>
-# updated: 2024-10-27
+# updated: 2024-11-17
 
 if !exists('g:srt_maps') || g:srt_maps
     nnoremap <buffer> <localleader>m <scriptcmd>SRTClean()<cr>
     nnoremap <buffer> <localleader>n <scriptcmd>SRTNumber()<cr>
 endif
 
+command! -nargs=1 MsToTime MsToTimeCmd(<f-args>)
+command! -nargs=1 TimeToMs TimeToMsCmd(<f-args>)
 command! SRTClean SRTClean()
 command! SRTNumber SRTNumber()
 command! -nargs=1 SRTShift SRTShift(<f-args>)
 command! -bang -nargs=* SRTSkew SRTSkew(<q-bang>, <f-args>)
 command! -range SRTToAscii SRTToAscii('n', <line1>, <line2>)
 
-# TODO: functions to remove <font color>, <b>, <i>?
-# TODO: remove alignments?
+# TODO: functions to remove: <b>, <i>, alignments?
 
 def MsToTime(ms: number): string
     # convert milliseconds to timestamp:
     var parts = []
-    parts[0] = ms / 3600000
-    var tmp_ms = ms % 3600000
-    parts[1] = tmp_ms / 60000
-    tmp_ms = tmp_ms % 60000
-    parts[2] = tmp_ms / 1000
-    tmp_ms = tmp_ms % 1000
-    parts[3] = tmp_ms
-    return printf('%02d:%02d:%02d,%03d', parts[0], parts[1], parts[2], parts[3])
+    var tmp_ms = ms
+    for n in [3600000, 60000, 1000]
+        parts += [tmp_ms / n]
+        tmp_ms = tmp_ms % n
+    endfor
+    return printf('%02d:%02d:%02d,%03d', parts[0], parts[1], parts[2], tmp_ms)
+enddef
+
+def MsToTimeCmd(arg: string)
+    echo MsToTime(str2nr(arg))
 enddef
 
 def TimeToMs(time: string): number
@@ -51,25 +54,33 @@ def TimeToMs(time: string): number
     return ms
 enddef
 
+def TimeToMsCmd(arg: string)
+    echo TimeToMs(arg)
+enddef
+
 def SRTClean()
     const pos = getpos('.')
-    # remove carriage returns, convert to unix:
     if !exists('g:srt_unix') || g:srt_unix
+        # remove carriage returns, convert to unix:
         sil keepp :%s/\r//e
         sil setlocal fileformat=unix nobomb
     endif
-    # convert to utf-8:
     if !exists('g:srt_utf8') || g:srt_utf8
+        # convert to utf-8:
         sil keepp :%s/\r//e
         sil setlocal fileencoding=utf-8
     endif
-    # replace tabs with spaces:
     if !exists('g:srt_tabs') || !g:srt_tabs
+        # replace tabs with spaces:
         setlocal expandtab
         retab
     endif
-    # TODO: instead of all this, try parsing subtitles as objects:
-    # TODO: populate scan/warn/error results in quickfix window
+    if !exists('g:srt_colors') || g:srt_colors
+        # remove font colors:
+        sil keepp :%s/<\/\?font[^>]*>//ge
+    endif
+    # TODO: instead of all this, parse subtitles as objects?
+    # TODO: populate scan/warn/error results in quickfix window?
     # strip trailing whitespaces:
     sil keepp :%s/\s\+$//e
     # merge repeated blank lines:
@@ -89,9 +100,12 @@ def SRTClean()
     # add missing space after leading dashes:
     sil keepp :%s/^-\([^ -]\)/- \1/e
     # make every utf-8 note character an eighth note:
-    sil keepp :%s/[\u2669\u266a\u266b\u266c]\+/\=nr2char(0x266a)/ge
-    # merge repeated eighth notes and pound symbols:
-    sil keepp :%s/\([\u266a#]\)[\u266a# ]\+/\1/ge
+    sil keepp :%s/[\u2669\u266b\u266c]\+/\=nr2char(0x266a)/ge
+    # merge repeated eighth notes and pound symbols, remove extra spaces:
+    sil keepp :%s/\([\u266a#]\) \+[\u266a#]\+/\1/ge
+    sil keepp :%s/\([\u266a#]\)[\u266a#]\+/\1/ge
+    sil keepp :%s/\([\u266a#]\)  \+/\1 /ge
+    sil keepp :%s/  \+\([\u266a#]\)/ \1/ge
     # add missing space after eighth note or pound symbol at start of lines:
     sil keepp :%s/^\([\u266a#]\)\([^ ]\)/\1 \2/ge
     # add missing space before eigth note or pound symbol at end of lines:
@@ -204,4 +218,4 @@ enddef
 
 defcompile
 
-# vim:et sw=4
+# vim:set sw=4
