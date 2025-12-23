@@ -32,7 +32,7 @@ COMMANDS                                                *srt-commands*
                 If [!] is specified, the skew function is calculated using
                 {timecode1} and {timecode2} as video times, not subtitle times.
 
-:[range]SRTToAscii                                      *:SRTToAscii*
+:[range]TextToAscii                                     *:TextToAscii*
                 Convert lines in [range] to ASCII with transliteration.
                 Requires external iconv command.
 

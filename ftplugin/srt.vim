@@ -1,22 +1,23 @@
 vim9script
 ## srt.vim - filetype plugin for working with subtitle files ::
 # maintainer: Chris Magyar <c.magyar.ec@gmail.com>
-# updated: 2024-11-17
+# updated: 2025-12-23
 
-if !exists('g:srt_maps') || g:srt_maps
+var create_maps = exists('g:srt_create_maps') ? g:srt_create_maps : true
+if create_maps
     nnoremap <buffer> <localleader>m <scriptcmd>SRTClean()<cr>
     nnoremap <buffer> <localleader>n <scriptcmd>SRTNumber()<cr>
 endif
 
-command! -nargs=1 MsToTime MsToTimeCmd(<f-args>)
-command! -nargs=1 TimeToMs TimeToMsCmd(<f-args>)
 command! SRTClean SRTClean()
 command! SRTNumber SRTNumber()
 command! -nargs=1 SRTShift SRTShift(<f-args>)
 command! -bang -nargs=* SRTSkew SRTSkew(<q-bang>, <f-args>)
-command! -range SRTToAscii SRTToAscii('n', <line1>, <line2>)
+command! -range TextToAscii TextToAscii('n', <line1>, <line2>)
 
 # TODO: operate on ranges
+# TODO: scan for common errors and populate quickfix window
+# TODO: OOP?
 
 def MsToTime(ms: number): string
     # convert milliseconds to timestamp:
@@ -27,10 +28,6 @@ def MsToTime(ms: number): string
         tmp_ms = tmp_ms % n
     endfor
     return printf('%02d:%02d:%02d,%03d', parts[0], parts[1], parts[2], tmp_ms)
-enddef
-
-def MsToTimeCmd(arg: string)
-    echo MsToTime(str2nr(arg))
 enddef
 
 def TimeToMs(time: string): number
@@ -52,10 +49,6 @@ def TimeToMs(time: string): number
         ms = ms + parts[0] * 3600000 + parts[1] * 60000 + parts[2] * 1000
     endif
     return ms
-enddef
-
-def TimeToMsCmd(arg: string)
-    echo TimeToMs(arg)
 enddef
 
 def SRTClean()
@@ -99,8 +92,6 @@ def SRTClean()
         setlocal expandtab
         retab
     endif
-    # TODO: OOP?
-    # TODO: populate scan/warn/error results in quickfix window?
     # strip trailing whitespaces:
     sil keepp :%s/\s\+$//e
     # merge repeated blank lines:
@@ -205,7 +196,7 @@ def SRTSkew(bang: string, st1: string, ss1: string, st2: string, ss2: string)
     endfor
 enddef
 
-def SRTToAscii(mode = 'n', start = -1, end = -1)
+def TextToAscii(mode = 'n', start = -1, end = -1)
     # convert to ASCII with transliteration:
     if !executable('iconv')
         echohl WarningMsg

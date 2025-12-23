@@ -25,12 +25,14 @@ formatting tags.
 `:SRTNumber`
 : Renumber subtiles.
 
+`:SRTShift <ms>`
+: Shift all subtitle timescodes (positive or negative milliseconds).
 
 `:SRTSkew <timecode> <ms> <timecode> <ms>`
 : Skew all subtitle timecodes, calculated from two timecodes and offsets.
 
-`:SRTShift <ms>`
-: Shift all subtitle timescodes (positive or negative milliseconds).
+`:[range]TextToAscii`
+: Convert text to ASCII with transliteration.  Requires iconv.
 
 ## Mappings
 
