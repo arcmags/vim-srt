@@ -51,13 +51,13 @@ formatting tags.
 : Remove `{\an8}` tags. (default: true)
 
 `g:srt_clear_bold`
-: Remove `&lt;b&gt;` tags. (default: true)
+: Remove `<b>` tags. (default: true)
 
 `g:srt_clear_font`
-: Remove `&lt;font&gt;` tags. (default: true)
+: Remove `<font>` tags. (default: true)
 
 `g:srt_clear_italic`
-: Remove `&lt;i&gt;` tags. (default: false)
+: Remove `<i>` tags. (default: false)
 
 `g:srt_clear_tabs`
 : Convert tabs to spaces. (default: true)
