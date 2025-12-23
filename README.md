@@ -48,16 +48,16 @@ formatting tags.
 ### SRTClean
 
 `g:srt_clear_alignment`
-: Remove {\an8} tags. (default: true)
+: Remove `{\an8}` tags. (default: true)
 
 `g:srt_clear_bold`
-: Remove &lt;b&gt; tags. (default: true)
+: Remove `&lt;b&gt;` tags. (default: true)
 
 `g:srt_clear_font`
-: Remove &lt;font&gt; tags. (default: true)
+: Remove `&lt;font&gt;` tags. (default: true)
 
 `g:srt_clear_italic`
-: Remove &lt;i&gt; tags. (default: false)
+: Remove `&lt;i&gt;` tags. (default: false)
 
 `g:srt_clear_tabs`
 : Convert tabs to spaces. (default: true)
