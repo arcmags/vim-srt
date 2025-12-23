@@ -123,6 +123,8 @@ def SRTClean()
     sil! keepp g/^[#\u266a]$/d
     # add missing space after leading dashes:
     sil keepp :%s/^-\([^ -]\)/- \1/e
+    # replace dots with ...:
+    sil keepp :%s/[\u2026]\+/.../ge
     # remove blank subtitles:
     sil! keepp g/^\d\+\n\d\d:\d\d:\d\d,\d\d\d --> \d\d:\d\d:\d\d,\d\d\d\n^$/d 3
     # strip trailing whitespaces:
