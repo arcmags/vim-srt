@@ -42,6 +42,15 @@ formatting tags.
 `<localleader>n`
 : `:SRTNumber`
 
+`<localleader>/-`
+: search for isolated lines with leading dash -
+
+`<localleader>/:`
+: search for sdh NAME: tags
+
+`<localleader>/<cr>`
+: search for subtitles containing more than 2 lines
+
 ## Customization
 
 `g:srt_create_maps`

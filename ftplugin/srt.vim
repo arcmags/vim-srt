@@ -1,13 +1,20 @@
 vim9script
 ## srt.vim - filetype plugin for working with subtitle files ::
 # maintainer: Chris Magyar <c.magyar.ec@gmail.com>
-# updated: 2025-12-23
+# updated: 2026-03-12
 
 var create_maps = exists('g:srt_create_maps') ? g:srt_create_maps : true
 if create_maps
     nnoremap <buffer> <localleader>m <scriptcmd>SRTClean()<cr>
     nnoremap <buffer> <localleader>n <scriptcmd>SRTNumber()<cr>
+    # search mappings:
+    nnoremap <buffer> <localleader>/- <cmd>silent /^\%(\%(<[bi]>[^-]\<bar>\%(<[bi]>\)\@![^-]\).*\n\%(<[bi]>\)\?-.*\n\%(<[bi]>\)\?[^-].*\n\<bar>^\d\d:\d\d:\d\d,.*\n\%(\%(<[bi]>[^-].*\n\<bar>\%(<[bi]>\)\@![^-].*\n\)\+\%(<[bi]>\)\?-\)\<bar>^\d\d:\d\d:\d\d,.*\n\%(<[bi]>\)\?-.*\n\n\)<cr>
+    nnoremap <buffer> <localleader>/: <cmd>silent /[A-Z].*:<cr>
+    nnoremap <buffer> <localleader>/<cr> <cmd>silent /^\d\d:\d\d:\d\d,.*\n\%(.\+\n\)\{3,}<cr>
 endif
+
+# music note digraph:
+digraphs mn 9834
 
 command! SRTClean SRTClean()
 command! SRTNumber SRTNumber()
@@ -92,14 +99,12 @@ def SRTClean()
         setlocal expandtab
         retab
     endif
-    # strip trailing whitespaces:
+    # strip leading/trailing whitespace/blank lines, merge blank lines:
+    sil keepp :%s/^\s\+//e
     sil keepp :%s/\s\+$//e
-    # merge repeated blank lines:
-    sil! keepp g/^\n\{2,}/d
-    # remove trailing blank lines:
-    sil keepp :%s/\($\n\s*\)\+\%$//e
-    # remove leading blank lines:
     sil keepp :%s/\%^\n\+//e
+    sil keepp :%s/\($\n\s*\)\+\%$//e
+    sil! keepp g/^\n\{2,}/d
     # fix timestamp arrows:
     sil keepp :%s/^\(\d\+:\d\d:\d\d,\d\d\d\)\s*\(\|-\|---\+\)>\+\s*\(\d\+:\d\d:\d\d,\d\d\d\)$/\1 --> \3/e
     # remove blank lines between indexes and timecodes:
@@ -110,31 +115,36 @@ def SRTClean()
     sil keepp :%s/\(\n\)\n\+\([^0-9]\)/\1\2/e
     # make every utf-8 note character an eighth note:
     sil keepp :%s/[\u2669\u266b\u266c]\+/\=nr2char(0x266a)/ge
-    # merge repeated eighth notes and pound symbols, remove extra spaces:
+    # merge repeated notes/pound-symbols/spaces:
     sil keepp :%s/\([\u266a#]\) \+[\u266a#]\+/\1/ge
     sil keepp :%s/\([\u266a#]\)[\u266a#]\+/\1/ge
     sil keepp :%s/\([\u266a#]\)  \+/\1 /ge
     sil keepp :%s/  \+\([\u266a#]\)/ \1/ge
-    # add missing space after eighth note or pound symbol at start of lines:
+    # add space around leading/trailing notes/pound-symbols:
     sil keepp :%s/^\([\u266a#]\)\([^ ]\)/\1 \2/ge
-    # add missing space before eigth note or pound symbol at end of lines:
     sil keepp :%s/^\(.\+\)\([^ ]\)\([\u266a#]\)$/\1\2 \3/ge
-    # remove lines with only eigth notes or pound symbols:
-    sil! keepp g/^[#\u266a]$/d
+    # merge repeated spaces:
+    sil keepp :%s/  \+/ /ge
+    # remove lines with only notes or pound-symbols:
+    sil! keepp g/^[- ]*[#\u266a]$/d
     # add missing space after leading dashes:
-    sil keepp :%s/^-\([^ -]\)/- \1/e
+    sil keepp :%s/^\(<[bi]>\)\?-\([^ -]\)/\1- \2/e
+    # ensure tags are outside of leading dash:
+    sil keepp :%s/^- \(<[bi]>\)/\1- /e
+    # remove lines with only notes or pound-symbols:
+    sil! keepp g/^\(<[bi]>\)\?[- ]*[#\u266a] *\(<\/[bi]>\)\? *$/d
+    # remove lines with only dash:
+    sil! keepp g/^ *\(<[bi]>\)\? *- *\(<\/[bi]>\)\? *$/d
     # replace dots with ...:
     sil keepp :%s/[\u2026]\+/.../ge
     # remove blank subtitles:
     sil! keepp g/^\d\+\n\d\d:\d\d:\d\d,\d\d\d --> \d\d:\d\d:\d\d,\d\d\d\n^$/d 3
-    # strip trailing whitespaces:
+    # strip leading/trailing whitespace/blank lines, merge blank lines:
+    sil keepp :%s/^\s\+//e
     sil keepp :%s/\s\+$//e
-    # merge repeated blank lines:
-    sil! keepp g/^\n\{2,}/d
-    # remove trailing blank lines:
-    sil keepp :%s/\($\n\s*\)\+\%$//e
-    # remove leading blank lines:
     sil keepp :%s/\%^\n\+//e
+    sil keepp :%s/\($\n\s*\)\+\%$//e
+    sil! keepp g/^\n\{2,}/d
     # renumber subtitles:
     SRTNumber()
     setpos('.', pos)
@@ -154,6 +164,16 @@ def SRTNumber()
             endif
             c = c + 1
         endif
+    endfor
+enddef
+
+def SRTScan(ms: string)
+    # scan subtitles for formatting errors/warning and populate the local list:
+    var text = ''
+    for line in range(1, line('$'))
+        text = getline(line)
+        #if match(text, '^\d\+:\d\d:\d\d,\d\d\d --> \d\+:\d\d:\d\d,\d\d\d$') >= 0
+        #endif
     endfor
 enddef
 

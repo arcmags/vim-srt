@@ -38,9 +38,15 @@ COMMANDS                                                *srt-commands*
 
 MAPS                                                    *srt-maps*
 
-<localleader>n  |:SRTNumber|
+<localleader>n      |:SRTNumber|
 
-<localleader>m  |:SRTClean|
+<localleader>m      |:SRTClean|
+
+<localleader>/-     search for isolated lines with leading dash -
+
+<localleader>/:     search for sdh NAME: tags
+
+<localleader>/<cr>  search for subtitles containing more than 2 lines
 
 SETTINGS                                                *srt-settings*
 
