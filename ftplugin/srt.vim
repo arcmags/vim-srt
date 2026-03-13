@@ -1,20 +1,23 @@
 vim9script
 ## srt.vim - filetype plugin for working with subtitle files ::
 # maintainer: Chris Magyar <c.magyar.ec@gmail.com>
-# updated: 2026-03-12
+# updated: 2026-03-13
 
 var create_maps = exists('g:srt_create_maps') ? g:srt_create_maps : true
 if create_maps
     nnoremap <buffer> <localleader>m <scriptcmd>SRTClean()<cr>
     nnoremap <buffer> <localleader>n <scriptcmd>SRTNumber()<cr>
     # search mappings:
-    nnoremap <buffer> <localleader>/- <cmd>silent /^\%(\%(<[bi]>[^-]\<bar>\%(<[bi]>\)\@![^-]\).*\n\%(<[bi]>\)\?-.*\n\%(<[bi]>\)\?[^-].*\n\<bar>^\d\d:\d\d:\d\d,.*\n\%(\%(<[bi]>[^-].*\n\<bar>\%(<[bi]>\)\@![^-].*\n\)\+\%(<[bi]>\)\?-\)\<bar>^\d\d:\d\d:\d\d,.*\n\%(<[bi]>\)\?-.*\n\n\)<cr>
-    nnoremap <buffer> <localleader>/: <cmd>silent /[A-Z].*:<cr>
-    nnoremap <buffer> <localleader>/<cr> <cmd>silent /^\d\d:\d\d:\d\d,.*\n\%(.\+\n\)\{3,}<cr>
+    nnoremap <buffer> <localleader>/<cr> /^\d\d:\d\d:\d\d,.*\n\zs\%(.\+\n\)\{3,}<cr>
+    nnoremap <buffer> <localleader>/- <cmd>silent! /\v^%(%(\<[bi]\>)?-.*\ze\n%(\<[bi]\><bar>%(\<[bi]\>)@!)[^-].*\n<bar>%(\d\d:\d\d:\d\d,)@!%(\<[bi]\><bar>%(\<[bi]\>)@!)[^-].*\n\zs%(\<[bi]\>)?-.*<bar>%(\d\d:\d\d:\d\d,.*\n)@<=%(\<[bi]\>)?-.*\ze\n\n)<cr>
+    nnoremap <buffer> <localleader>/: /[A-Z].*:<cr>
+    nnoremap <buffer> <localleader>/a /[^ -~\u266a#]<cr>
+    nnoremap <buffer> <localleader>/A /[^ -~]<cr>
+    nnoremap <buffer> <localleader>/n /[\u266a#]\+<cr>
 endif
 
 # music note digraph:
-digraphs mn 9834
+digraphs nn 9834
 
 command! SRTClean SRTClean()
 command! SRTNumber SRTNumber()
@@ -22,8 +25,8 @@ command! -nargs=1 SRTShift SRTShift(<f-args>)
 command! -bang -nargs=* SRTSkew SRTSkew(<q-bang>, <f-args>)
 command! -range TextToAscii TextToAscii('n', <line1>, <line2>)
 
-# TODO: operate on ranges
-# TODO: scan for common errors and populate quickfix window
+# TODO: ranges
+# TODO: scan for common errors and populate quickfix window?
 # TODO: OOP?
 
 def MsToTime(ms: number): string
@@ -194,6 +197,8 @@ enddef
 
 def SRTSkew(bang: string, st1: string, ss1: string, st2: string, ss2: string)
     # skew subtitle timecodes:
+    # TODO: allow any order
+    # TODO: allow fewer args?
     const t1 = TimeToMs(st1)
     const s1 = str2nr(ss1)
     const t2 = TimeToMs(st2)
@@ -220,6 +225,7 @@ enddef
 
 def TextToAscii(mode = 'n', start = -1, end = -1)
     # convert to ASCII with transliteration:
+    # TODO: keep musical-notes option?
     if !executable('iconv')
         echohl WarningMsg
         echomsg "W: required program 'iconv' not found, no changes made"

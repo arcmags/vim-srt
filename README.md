@@ -42,14 +42,25 @@ formatting tags.
 `<localleader>n`
 : `:SRTNumber`
 
+### Search Mappings
+
+`<localleader>/<cr>`
+: search for subtitles containing more than 2 lines
+
 `<localleader>/-`
 : search for isolated lines with leading dash -
 
 `<localleader>/:`
 : search for sdh NAME: tags
 
-`<localleader>/<cr>`
-: search for subtitles containing more than 2 lines
+`<localleader>/a`
+: search for non-ascii, non-musical-not characters
+
+`<localleader>/A`
+: search for non-ascii characters
+
+`<localleader>/n`
+: search for musical-note characters
 
 ## Customization
 
